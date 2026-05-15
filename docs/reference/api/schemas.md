@@ -5594,6 +5594,9 @@ CreateWorkspaceRequest provides options for creating a new workspace. Only one o
       "organization_assign_default": true,
       "organization_field": "string",
       "organization_mapping": {},
+      "redirect_allowed_hosts": [
+        "string"
+      ],
       "redirect_url": {
         "forceQuery": true,
         "fragment": "string",
@@ -6192,6 +6195,9 @@ CreateWorkspaceRequest provides options for creating a new workspace. Only one o
     "organization_assign_default": true,
     "organization_field": "string",
     "organization_mapping": {},
+    "redirect_allowed_hosts": [
+      "string"
+    ],
     "redirect_url": {
       "forceQuery": true,
       "fragment": "string",
@@ -8671,6 +8677,9 @@ Only certain features set these fields: - FeatureManagedAgentLimit|
   "organization_assign_default": true,
   "organization_field": "string",
   "organization_mapping": {},
+  "redirect_allowed_hosts": [
+    "string"
+  ],
   "redirect_url": {
     "forceQuery": true,
     "fragment": "string",
@@ -8725,6 +8734,7 @@ Only certain features set these fields: - FeatureManagedAgentLimit|
 | `organization_assign_default`        | boolean                          | false    |              |                                                                                                                                                                                                                                                                                                                                                                    |
 | `organization_field`                 | string                           | false    |              |                                                                                                                                                                                                                                                                                                                                                                    |
 | `organization_mapping`               | object                           | false    |              |                                                                                                                                                                                                                                                                                                                                                                    |
+| `redirect_allowed_hosts`             | array of string                  | false    |              | Redirect allowed hosts is an allowlist of hostnames that may be used as the host of the OIDC redirect_uri. When non-empty, the redirect_uri is constructed from the incoming request's Host header (validated against this list) instead of from AccessURL. Every listed host must also be registered as a valid redirect URI in the OIDC provider. This setting is mutually exclusive with RedirectURL: if RedirectURL is set, this allowlist is ignored. |
 | `redirect_url`                       | [serpent.URL](#serpenturl)       | false    |              | Redirect URL is optional, defaulting to 'ACCESS_URL'. Only useful in niche situations where the OIDC callback domain is different from the ACCESS_URL domain.                                                                                                                                                                                                      |
 | `scopes`                             | array of string                  | false    |              |                                                                                                                                                                                                                                                                                                                                                                    |
 | `sign_in_text`                       | string                           | false    |              |                                                                                                                                                                                                                                                                                                                                                                    |

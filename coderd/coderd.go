@@ -752,8 +752,10 @@ func New(options *Options) *API {
 	}
 
 	var oidcAuthURLParams map[string]string
+	var oidcRedirectAllowedHosts []string
 	if options.OIDCConfig != nil {
 		oidcAuthURLParams = options.OIDCConfig.AuthURLParams
+		oidcRedirectAllowedHosts = options.OIDCConfig.RedirectAllowedHosts
 	}
 
 	api.Auditor.Store(&options.Auditor)
@@ -1068,7 +1070,7 @@ func New(options *Options) *API {
 				r.Route(fmt.Sprintf("/%s/callback", externalAuthConfig.ID), func(r chi.Router) {
 					r.Use(
 						apiKeyMiddlewareRedirect,
-						httpmw.ExtractOAuth2(externalAuthConfig, options.HTTPClient, options.DeploymentValues.HTTPCookies, nil, externalAuthConfig.CodeChallengeMethodsSupported),
+						httpmw.ExtractOAuth2(externalAuthConfig, options.HTTPClient, options.DeploymentValues.HTTPCookies, nil, externalAuthConfig.CodeChallengeMethodsSupported, nil),
 					)
 					r.Get("/", api.externalAuthCallback(externalAuthConfig))
 				})
@@ -1583,14 +1585,14 @@ func New(options *Options) *API {
 					r.Route("/github", func(r chi.Router) {
 						r.Use(
 							// Github supports PKCE S256
-							httpmw.ExtractOAuth2(options.GithubOAuth2Config, options.HTTPClient, options.DeploymentValues.HTTPCookies, nil, options.GithubOAuth2Config.PKCESupported()),
+							httpmw.ExtractOAuth2(options.GithubOAuth2Config, options.HTTPClient, options.DeploymentValues.HTTPCookies, nil, options.GithubOAuth2Config.PKCESupported(), nil),
 						)
 						r.Get("/callback", api.userOAuth2Github)
 					})
 				})
 				r.Route("/oidc/callback", func(r chi.Router) {
 					r.Use(
-						httpmw.ExtractOAuth2(options.OIDCConfig, options.HTTPClient, options.DeploymentValues.HTTPCookies, oidcAuthURLParams, options.OIDCConfig.PKCESupported()),
+						httpmw.ExtractOAuth2(options.OIDCConfig, options.HTTPClient, options.DeploymentValues.HTTPCookies, oidcAuthURLParams, options.OIDCConfig.PKCESupported(), oidcRedirectAllowedHosts),
 					)
 					r.Get("/", api.userOIDC)
 				})

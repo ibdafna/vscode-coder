@@ -856,6 +856,14 @@ type OIDCConfig struct {
 	// situations where the OIDC callback domain is different from the ACCESS_URL
 	// domain.
 	RedirectURL serpent.URL `json:"redirect_url" typescript:",notnull"`
+	// RedirectAllowedHosts is an allowlist of hostnames that may be used as
+	// the host of the OIDC redirect_uri. When non-empty, the redirect_uri is
+	// constructed from the incoming request's Host header (validated against
+	// this list) instead of from AccessURL. Every listed host must also be
+	// registered as a valid redirect URI in the OIDC provider. This setting
+	// is mutually exclusive with RedirectURL: if RedirectURL is set, this
+	// allowlist is ignored.
+	RedirectAllowedHosts serpent.StringArray `json:"redirect_allowed_hosts" typescript:",notnull"`
 }
 
 type TelemetryConfig struct {
@@ -2506,6 +2514,21 @@ func (c *DeploymentValues) Options() serpent.OptionSet {
 			UseInstead: nil,
 			// In most deployments, this setting can only complicate and break OIDC.
 			// So hide it, and only surface it to the small number of users that need it.
+			Hidden: true,
+		},
+		{
+			Name: "OIDC Redirect Allowed Hosts",
+			Description: "An allowlist of hostnames that may be used as the host of the OIDC redirect_uri. " +
+				"When set, the redirect_uri sent to the OIDC provider is built from the incoming request's Host header " +
+				"(validated against this list) instead of from access-url. Every listed host must also be registered " +
+				"as a valid redirect URI in the OIDC provider. Ignored when oidc-redirect-url is set.",
+			Flag:    "oidc-redirect-allowed-hosts",
+			Env:     "CODER_OIDC_REDIRECT_ALLOWED_HOSTS",
+			YAML:    "oidcRedirectAllowedHosts",
+			Default: "",
+			Value:   &c.OIDC.RedirectAllowedHosts,
+			Group:   &deploymentGroupOIDC,
+			// Niche feature for multi-domain deployments. Surface only to operators who need it.
 			Hidden: true,
 		},
 		// Telemetry settings

@@ -1177,6 +1177,11 @@ type OIDCConfig struct {
 	// SignupsDisabledText is the text do display on the static error page.
 	SignupsDisabledText string
 	PKCEMethods         []promoauth.Oauth2PKCEChallengeMethod
+	// RedirectAllowedHosts, when non-empty, enables dynamic redirect_uri
+	// construction from the request Host header. The request Host must match
+	// (case-insensitive, ignoring port) one of the hostnames in this list,
+	// otherwise the OIDC flow is rejected.
+	RedirectAllowedHosts []string
 }
 
 // PKCESupported is to prevent nil pointer dereference.
